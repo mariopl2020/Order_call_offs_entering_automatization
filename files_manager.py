@@ -11,7 +11,7 @@ class FilesProcessing():
 
 		self.data_frame = None
 
-	def create_dataframe_from_file (self, filename):
+	def create_dataframe_from_file(self, filename):
 		"""Creates dataframe object from xlsx file
 
 		Args:
@@ -45,3 +45,19 @@ class FilesProcessing():
 		dataframe.to_excel(excel_writer=filepath)
 
 
+class CallOffFileProcessing(FilesProcessing):
+	"""Represents object what includes methods responsible for xlsx file processing with call off data"""
+
+	def remove_empty_lines(self):
+		"""Removes empty rows from call off dataframe"""
+
+		mask = self.data_frame["SKU"].notnull()
+		self.data_frame = self.data_frame[mask]
+
+	def give_complete_dataframe(self, filename):
+		"""Groups all key processing methods to get complete call off dataframe shape from file form"""
+
+		super().give_complete_dataframe(filename)
+		self.remove_empty_lines()
+
+		return self.data_frame

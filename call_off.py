@@ -1,4 +1,4 @@
-from files_manager import FilesProcessing
+from files_manager import CallOffFileProcessing
 
 class CallOff():
 	"""Represents data from call off template file"""
@@ -7,7 +7,7 @@ class CallOff():
 		"""Initialization of CallOff object"""
 
 		self.filename = r"calloff_template.xlsx"
-		self.file_processor = FilesProcessing()
+		self.file_processor = CallOffFileProcessing()
 		self.call_off_data_frame = None
 
 	def get_data_frame(self):
