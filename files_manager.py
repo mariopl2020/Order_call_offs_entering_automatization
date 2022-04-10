@@ -35,13 +35,14 @@ class FilesProcessing():
 
 		return self.data_frame
 
-	def write_dataframe_to_excel(self, dataframe):
+	def write_dataframe_to_excel(self, dataframe, filename):
 		"""Writes provided dataframe into file 'output.xlsx'
 
 		Args:
-			dataframe (Dataframe): dataframe to be saved in xlsx file"""
+			dataframe (Dataframe): dataframe to be saved in xlsx file
+			filename (str): name of file to be written"""
 
-		filepath = r"./data/output.xlsx"
+		filepath = r"./data/" + filename
 		dataframe.to_excel(excel_writer=filepath)
 
 

@@ -27,4 +27,3 @@ class CallOff():
 		self.current_order_no = self.call_off_data_frame.iloc[row_index]["Customer_PO_number"]
 
 
-# @TODO ABSTRACT CLASS for call_off and orders
