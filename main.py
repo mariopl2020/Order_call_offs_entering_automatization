@@ -12,6 +12,12 @@ class Program():
 		self.call_off = self.order.call_off
 		self.files_processing = FilesProcessing()
 
+	def main_run(self):
+		"""Collects all key method calls to run program completely"""
+
+		self.call_off.get_data_frame()
+		self.order.get_data_frame()
+
 	def main_loop(self):
 		"""Iterates on single order line from call off and calls main methods to process it"""
 
@@ -19,12 +25,9 @@ class Program():
 			self.call_off.give_single_order(index)
 			self.order.match_order_from_call_off()
 			self.order.create_working_dataframe()
-
-	def main_run(self):
-		"""Collects all key method calls to run program completely"""
-
-		self.call_off.get_data_frame()
-		self.order.get_data_frame()
+			self.order.process_row_to_be_delivered()
+			self.order.process_row_with_remaining_quantity()
+			self.order.change_order_part_postfix()
 
 
 if __name__ == "__main__":
@@ -32,5 +35,5 @@ if __name__ == "__main__":
 	program.main_run()
 	program.main_loop()
 	program.files_processing.write_dataframe_to_excel(program.order.orders_data_frame, "output1.xlsx")
-	program.files_processing.write_dataframe_to_excel(program.order.temporary_orders_to_process, "output2.xlsx")
+	program.files_processing.write_dataframe_to_excel(program.order.working_orders_dataframe, "output2.xlsx")
 

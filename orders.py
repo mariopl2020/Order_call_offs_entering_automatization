@@ -14,7 +14,7 @@ class Orders():
 		self.orders_data_frame = None
 		self.current_order = None
 		self.current_order_index = None
-		self.temporary_orders_to_process = None
+		self.working_orders_dataframe = None
 
 	def get_data_frame(self):
 		"""Getting completely processed dataframe starting from raw xlsx file"""
@@ -33,9 +33,40 @@ class Orders():
 		into rows what will be delivered and remaining part of order still to be called off"""
 
 		self.orders_data_frame = self.orders_data_frame.drop(self.current_order_index)
-		self.temporary_orders_to_process = pd.concat(objs=[self.current_order, self.current_order], ignore_index=True)
-		self.temporary_orders_to_process["Delivered_(kg)"] = self.temporary_orders_to_process["Delivered_(kg)"].astype("int32")
+		self.working_orders_dataframe = pd.concat(objs=[self.current_order, self.current_order], ignore_index=True)
+		self.working_orders_dataframe["Delivered_(kg)"] = self.working_orders_dataframe["Delivered_(kg)"].astype("int32")
 
+	def process_row_to_be_delivered(self):
+		"""Writes down values from order from call off dataframe as part of order to be delivered"""
 
+		self.working_orders_dataframe.loc[0, "Current_delivery_date"] =\
+			self.call_off.current_order["Confirmed_delivery_date"]
+		self.working_orders_dataframe.loc[0, "Status"] = "confirmed"
+		self.working_orders_dataframe.loc[0, "Required_delivery_date_OTIF1"] =\
+			self.call_off.current_order["Requested_date"]
+		self.working_orders_dataframe.loc[0, "Required_quantity_OTIF1"] =\
+			self.call_off.current_order["Called_quantity_[kg]"]
+		self.working_orders_dataframe.loc[0, "Ordered_(kg)"] =\
+			self.call_off.current_order["Confirmed_quantity_[kg]"]
+		self.working_orders_dataframe.loc[0, "Delivered_(kg)"] =\
+			int(self.call_off.current_order["Confirmed_quantity_[kg]"])
 
+	def process_row_with_remaining_quantity(self):
+		"""Corrects quantity values for row what indicates still remaining order's part"""
 
+		self.working_orders_dataframe.loc[1, "Ordered_(kg)"] -= self.working_orders_dataframe.loc[0, "Ordered_(kg)"]
+		self.working_orders_dataframe.loc[1, "Delivered_(kg)"] = \
+			self.working_orders_dataframe.loc[1, "Delivered_(kg)"] - self.working_orders_dataframe.loc[0, "Delivered_(kg)"]
+		if self.working_orders_dataframe.loc[1, "Delivered_(kg)"] < 0:
+			self.working_orders_dataframe.loc[1, "Delivered_(kg)"] = 0
+
+	def change_order_part_postfix(self):
+		"""Changes order number's postfixes what indicates order part's number"""
+
+		if "/" in self.working_orders_dataframe.loc[1, "Purchase_order_number"]:
+			labour_list = self.working_orders_dataframe.loc[1, "Purchase_order_number"].split("/")
+			labour_list[1] = str(int(labour_list[1]) + 1)
+			self.working_orders_dataframe.loc[1, "Purchase_order_number"] = labour_list[0] + "/" + labour_list[1]
+		else:
+			self.working_orders_dataframe.loc[0, "Purchase_order_number"] += "/1"
+			self.working_orders_dataframe.loc[1, "Purchase_order_number"] += "/2"
