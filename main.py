@@ -30,12 +30,12 @@ class Program():
 			self.order.change_order_part_postfix()
 			self.order.calculate_confirmed_part_row_index()
 			self.order.assign_row_indexes()
-
+			self.order.add_working_rows_to_orders_dataframe()
 
 if __name__ == "__main__":
 	program = Program()
 	program.main_run()
 	program.main_loop()
-	program.files_processing.write_dataframe_to_excel(program.order.orders_data_frame, "output1.xlsx")
-	program.files_processing.write_dataframe_to_excel(program.order.working_orders_dataframe, "output2.xlsx")
+	program.files_processing.write_dataframe_to_excel(program.order.orders_data_frame, "processed_orders.xlsx")
+
 

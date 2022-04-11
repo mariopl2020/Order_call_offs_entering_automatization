@@ -43,7 +43,7 @@ class FilesProcessing():
 			filename (str): name of file to be written"""
 
 		filepath = r"./data/" + filename
-		dataframe.to_excel(excel_writer=filepath)
+		dataframe.to_excel(excel_writer=filepath, index=False)
 
 
 class CallOffFileProcessing(FilesProcessing):

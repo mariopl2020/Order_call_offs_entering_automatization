@@ -85,3 +85,11 @@ class Orders():
 		"""Assigns row indexes to both parts of orders """
 
 		self.working_orders_dataframe.index = [self.confirmed_part_row_index, self.current_order_index[0]]
+
+	def add_working_rows_to_orders_dataframe(self):
+		"""Rebuilds base orders dataframe by adding newly calculated order part's rows, sorts them by indexes and drops
+		them"""
+
+		self.orders_data_frame = pd.concat(objs=[self.orders_data_frame, self.working_orders_dataframe])
+		self.orders_data_frame = self.orders_data_frame.sort_index()
+		self.orders_data_frame = self.orders_data_frame.reset_index(drop=True)
