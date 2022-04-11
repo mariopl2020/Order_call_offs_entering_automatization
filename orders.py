@@ -14,6 +14,7 @@ class Orders():
 		self.orders_data_frame = None
 		self.current_order = None
 		self.current_order_index = None
+		self.confirmed_part_row_index = None
 		self.working_orders_dataframe = None
 
 	def get_data_frame(self):
@@ -70,3 +71,17 @@ class Orders():
 		else:
 			self.working_orders_dataframe.loc[0, "Purchase_order_number"] += "/1"
 			self.working_orders_dataframe.loc[1, "Purchase_order_number"] += "/2"
+
+	def calculate_confirmed_part_row_index(self):
+		"""Calculates row index for new confirmed order's part based on sorted delivery dates in order's main
+		dataframe """
+
+		confirmed_part_delivery_date = self.working_orders_dataframe.loc[0, "Current_delivery_date"]
+		mask = self.orders_data_frame["Current_delivery_date"] >= confirmed_part_delivery_date
+		orders_with_equal_later_date = self.orders_data_frame[mask]
+		self.confirmed_part_row_index = orders_with_equal_later_date.index[0] - 0.5
+
+	def assign_row_indexes(self):
+		"""Assigns row indexes to both parts of orders """
+
+		self.working_orders_dataframe.index = [self.confirmed_part_row_index, self.current_order_index[0]]

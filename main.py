@@ -28,6 +28,8 @@ class Program():
 			self.order.process_row_to_be_delivered()
 			self.order.process_row_with_remaining_quantity()
 			self.order.change_order_part_postfix()
+			self.order.calculate_confirmed_part_row_index()
+			self.order.assign_row_indexes()
 
 
 if __name__ == "__main__":
