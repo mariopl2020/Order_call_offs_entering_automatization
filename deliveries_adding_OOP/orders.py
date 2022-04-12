@@ -16,7 +16,6 @@ class Orders():
 		self.current_order_index = None
 		self.confirmed_part_row_index = None
 		self.working_orders_dataframe = None
-		self.fully_taken_order = None
 
 	def get_data_frame(self):
 		"""Getting completely processed dataframe starting from raw xlsx file"""
@@ -34,12 +33,18 @@ class Orders():
 		self.current_order_index = self.current_order.index
 
 	def create_working_dataframe(self):
-		"""Deletes order row from order dataframe and double it into working dataframe. It starts splitting order
-		into rows what will be delivered and remaining part of order still to be called off"""
+		"""Deletes order row from order dataframe. Checks if order will be fully or partially taken. Then decides to \
+		split it into 2 rows (to deliver and remaining part of order still to be called off) or 1 only to be delivered.\
+		Next they/it is assigned to working date frame
+		"""
 
 		self.orders_data_frame = self.orders_data_frame.drop(self.current_order_index)
-		self.working_orders_dataframe = pd.concat(objs=[self.current_order, self.current_order], ignore_index=True)
-		self.working_orders_dataframe["Delivered_(kg)"] = self.working_orders_dataframe["Delivered_(kg)"].astype("int32")
+		if self.call_off.fully_taken_order == "complete":
+			self.working_orders_dataframe = self.current_order.reset_index(drop=True)
+		else:
+			self.working_orders_dataframe = pd.concat(objs=[self.current_order, self.current_order], ignore_index=True)
+		self.working_orders_dataframe.loc[: ,"Delivered_(kg)"] = \
+			self.working_orders_dataframe["Delivered_(kg)"].astype("int32")
 
 	def process_row_to_be_delivered(self):
 		"""Writes down values from order from call off dataframe as part of order to be delivered"""
@@ -86,9 +91,12 @@ class Orders():
 		self.confirmed_part_row_index = orders_with_equal_later_date.index[0] - 0.5
 
 	def assign_row_indexes(self):
-		"""Assigns row indexes to both parts of orders """
+		"""Assigns row indexes to part of orders """
 
-		self.working_orders_dataframe.index = [self.confirmed_part_row_index, self.current_order_index[0]]
+		if self.call_off.fully_taken_order == "complete":
+			self.working_orders_dataframe.index = [self.confirmed_part_row_index]
+		else:
+			self.working_orders_dataframe.index = [self.confirmed_part_row_index, self.current_order_index[0]]
 
 	def add_working_rows_to_orders_dataframe(self):
 		"""Rebuilds base orders dataframe by adding newly calculated order part's rows, sorts them by indexes and drops

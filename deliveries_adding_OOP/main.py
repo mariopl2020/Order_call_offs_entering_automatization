@@ -29,8 +29,9 @@ class Program():
 			self.order.match_order_from_call_off()
 			self.order.create_working_dataframe()
 			self.order.process_row_to_be_delivered()
-			self.order.process_row_with_remaining_quantity()
-			self.order.change_order_part_postfix()
+			if self.call_off.fully_taken_order == "partial":
+				self.order.process_row_with_remaining_quantity()
+				self.order.change_order_part_postfix()
 			self.order.calculate_confirmed_part_row_index()
 			self.order.assign_row_indexes()
 			self.order.add_working_rows_to_orders_dataframe()
