@@ -1,5 +1,6 @@
 from files_manager import CallOffFileProcessing
 
+
 class CallOff():
 	"""Represents data from call off template file"""
 
