@@ -16,11 +16,15 @@ class Orders():
 		self.current_order_index = None
 		self.confirmed_part_row_index = None
 		self.working_orders_dataframe = None
+		self.fully_taken_order = None
 
 	def get_data_frame(self):
 		"""Getting completely processed dataframe starting from raw xlsx file"""
 
-		self.orders_data_frame = self.data_processor.give_complete_dataframe(self.filename)
+		try:
+			self.orders_data_frame = self.data_processor.give_complete_dataframe(self.filename)
+		except FileNotFoundError:
+			raise FileNotFoundError("File orders.xlsx does not exist. Provide it to run program")
 
 	def match_order_from_call_off(self):
 		"""Finds row in order dataframe corresponding to order number from call off. Write it down and its index"""

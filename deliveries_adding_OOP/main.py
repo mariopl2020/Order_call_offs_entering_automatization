@@ -15,8 +15,11 @@ class Program():
 	def main_run(self):
 		"""Collects all key method calls to run program completely"""
 
-		self.call_off.get_data_frame()
-		self.order.get_data_frame()
+		try:
+			self.call_off.get_data_frame()
+			self.order.get_data_frame()
+		except FileNotFoundError as error:
+			raise FileNotFoundError(error)
 
 	def main_loop(self):
 		"""Iterates on single order line from call off and calls main methods to process it"""
@@ -34,8 +37,10 @@ class Program():
 
 if __name__ == "__main__":
 	program = Program()
-	program.main_run()
-	program.main_loop()
-	program.files_processing.write_dataframe_to_excel(program.order.orders_data_frame, "processed_orders.xlsx")
-
+	try:
+		program.main_run()
+		program.main_loop()
+		program.files_processing.write_dataframe_to_excel(program.order.orders_data_frame, "processed_orders.xlsx")
+	except FileNotFoundError as error:
+		print(error)
 

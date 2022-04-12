@@ -16,7 +16,10 @@ class CallOff():
 	def get_data_frame(self):
 		"""Getting completely processed dataframe starting from raw xlsx file"""
 
-		self.call_off_data_frame = self.file_processor.give_complete_dataframe(self.filename)
+		try:
+			self.call_off_data_frame = self.file_processor.give_complete_dataframe(self.filename)
+		except FileNotFoundError:
+			raise FileNotFoundError("File calloff_template.xlsx does not exist. Provide it to run program")
 
 	def give_single_order(self, row_index):
 		"""Gives complete row from dataframe as Series object and order number
