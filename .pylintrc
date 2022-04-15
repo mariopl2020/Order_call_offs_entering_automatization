@@ -1,0 +1,2 @@
+[master]
+disable=import-error, too-many-instance-attributes
